@@ -1,0 +1,13 @@
+= README
+
+== building
+
+to build client for web, run the included `build_web.sh`
+
+to build client native:
+`cargo build --release --bin client --features client`
+
+to build server native:
+`cargo build --release --bin server --features server`
+
+remove the `--release` option to build dev builds, which should be faster to compile

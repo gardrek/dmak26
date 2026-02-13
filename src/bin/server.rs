@@ -39,35 +39,33 @@ fn main() {
     let _server = app
         .world_mut()
         .spawn(srv::ExampleServer) // {
-            //conditioner: None,
-            // transport: ServerTransports::Udp {
-            //     local_port: SERVER_PORT,
-            // },
-            // transport: ServerTransports::WebSocket {
-            //     local_port: SERVER_PORT,
-            // },
-            /*
-            transport: ServerTransports::WebTransport {
-                local_port: SERVER_PORT,
-                certificate: WebTransportCertificateSettings::FromFile {
-                    cert: "../../certificates/cert.pem".to_string(),
-                    key: "../../certificates/key.pem".to_string(),
-                },
+        //conditioner: None,
+        // transport: ServerTransports::Udp {
+        //     local_port: SERVER_PORT,
+        // },
+        // transport: ServerTransports::WebSocket {
+        //     local_port: SERVER_PORT,
+        // },
+        /*
+        transport: ServerTransports::WebTransport {
+            local_port: SERVER_PORT,
+            certificate: WebTransportCertificateSettings::FromFile {
+                cert: "../../certificates/cert.pem".to_string(),
+                key: "../../certificates/key.pem".to_string(),
             },
-            */
-            // #[cfg(feature = "steam")]
-            // transport: ServerTransports::Steam {
-            //     local_port: SERVER_PORT,
-            // },
-            //shared: SHARED_SETTINGS,
+        },
+        */
+        // #[cfg(feature = "steam")]
+        // transport: ServerTransports::Steam {
+        //     local_port: SERVER_PORT,
+        // },
+        //shared: SHARED_SETTINGS,
         //})
         .id();
 
     app.add_systems(Startup, start);
 
-    app.add_plugins(shared::HelloPlugin)
-        .add_plugins(shared::CounterPlugin)
-        .run();
+    app.add_plugins(shared::HelloPlugin).run();
 }
 
 fn start(mut commands: Commands, server: Single<Entity, With<Server>>) {

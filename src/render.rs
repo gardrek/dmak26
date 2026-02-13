@@ -2,13 +2,20 @@ use bevy::prelude::*;
 
 use bevy::input::common_conditions::input_just_pressed;
 
+use bevy_persistent::Persistent;
+
 use crate::shared::Counter;
 
 #[derive(Component)]
 struct MenuMusic;
 
-//#[derive(Resource)]
-//struct CoinSound(AudioSource);
+#[derive(Resource)]
+struct CoinSound(Handle<AudioSource>);
+
+/*
+#[derive(Resource)]
+struct LegendaryDeedsFont(());
+*/
 
 #[derive(Component)]
 struct CounterText;
@@ -37,6 +44,12 @@ impl CounterRenderPlugin {
             PlaybackSettings::LOOP,
         ));
 
+        let coin_sound = asset_server.load("coin1.ogg");
+
+        commands.insert_resource(CoinSound(coin_sound));
+
+        let font_handle = asset_server.load("ld.ttf");
+
         // With spans
         commands
             .spawn((
@@ -50,7 +63,7 @@ impl CounterRenderPlugin {
                     ..default()
                 },
                 TextFont {
-                    //font: font_handle.clone().into(),
+                    font: font_handle.clone().into(),
                     font_size: 60.0,
                     ..Default::default()
                 },
@@ -59,6 +72,10 @@ impl CounterRenderPlugin {
                 parent.spawn((
                     Text::new("DREAMS"),
                     TextLayout::new_with_justify(Justify::Center),
+                    TextFont {
+                        font: font_handle.clone().into(),
+                        ..Default::default()
+                    },
                     Node {
                         top: px(75.0),
                         ..default()
@@ -83,19 +100,21 @@ impl CounterRenderPlugin {
 
     fn number_go_up(
         mut commands: Commands,
-        mut number: ResMut<Counter>,
-        //~ coin_sound: Option<Res<CoinSound>>,
-        asset_server: Res<AssetServer>,
+        mut number: ResMut<Persistent<Counter>>,
+        coin_sound: Res<CoinSound>,
+        //~ asset_server: Res<AssetServer>,
     ) {
-        number.inc();
+        number.update(|counter| {
+            counter.inc();
+        }).unwrap();
 
         commands.spawn((
-            AudioPlayer::new(asset_server.load("coin1.ogg")),
-            PlaybackSettings::ONCE,
+            AudioPlayer::new(coin_sound.0.clone()),
+            PlaybackSettings::DESPAWN,
         ));
     }
 
-    fn update_counter_text(counter: Res<Counter>, mut text: Single<&mut Text, With<CounterText>>) {
-        text.0 = format!("{}", counter.get());
+    fn update_counter_text(counter: Res<Persistent<Counter>>, mut text: Single<&mut Text, With<CounterText>>) {
+        text.0 = format!("{}", counter.get_count());
     }
 }

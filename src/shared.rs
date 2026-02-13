@@ -8,6 +8,8 @@ use core::time::Duration;
 use crate::msg::Inputs;
 use crate::msg::PlayerPosition;
 
+pub const GAME_DIR_NAME: &'static str = "dmak26";
+
 pub const FIXED_TIMESTEP_HZ: f64 = 64.0;
 pub const SERVER_PORT: u16 = 25252;
 /// 0 means that the OS will assign any available port
@@ -81,19 +83,51 @@ pub struct CounterPlugin;
 
 impl Plugin for CounterPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Counter(0));
+        use dirs;
+
+        use std::path::Path;
+
+        use bevy_persistent::prelude::*;
+
+        // local save data
+        let data_dir = dirs::data_dir()
+            .map(|native_dir| native_dir.join(GAME_DIR_NAME))
+            .unwrap_or(Path::new("local").join("data"));
+
+        /*
+        let config_dir = dirs::config_dir()
+            .map(|native_dir| native_dir.join(shared::GAME_DIR_NAME))
+            .unwrap_or(Path::new("local").join("config"));
+        */
+
+        println!("data={:?}", data_dir);
+        //println!("config={:?}", config_dir);
+
+        app.insert_resource(
+            Persistent::<Counter>::builder()
+                .name("Dreams")
+                .format(StorageFormat::RonPretty)
+                .path(data_dir.join("dreams.sav"))
+                .default(Counter::default())
+                .build()
+                .expect("failed to init save data"),
+        );
     }
 }
 
-#[derive(Resource)]
+use serde::Deserialize;
+use serde::Serialize;
+
+#[derive(Default, Resource, Serialize, Deserialize)]
 pub struct Counter(i64);
 
 impl Counter {
-    pub fn inc(&mut self) {
+    pub fn inc(&mut self) -> i64 {
         self.0 += 1;
+        self.0
     }
 
-    pub fn get(&self) -> i64 {
+    pub fn get_count(&self) -> i64 {
         self.0
     }
 }

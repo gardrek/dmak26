@@ -2,13 +2,15 @@
 
 use bevy::prelude::*;
 
-use lightyear::prelude::*;
+//use lightyear::prelude::*;
 
-use dmak26::msg;
 use dmak26::render;
 use dmak26::shared;
-use dmak26::shared::*;
 
+//use dmak26::msg;
+//use dmak26::shared::*;
+
+// #[cfg(not(target_family = "wasm"))]
 use bevy::asset::uuid::Uuid;
 
 fn main() {
@@ -18,6 +20,7 @@ fn main() {
         .add_plugins(shared::HelloPlugin)
         .add_plugins(shared::CounterPlugin)
         .add_plugins(render::CounterRenderPlugin)
+        .add_plugins(ClientPlugin)
         .run();
 }
 
@@ -30,11 +33,12 @@ impl Plugin for ClientPlugin {
 }
 
 impl ClientPlugin {
-    fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-        //
+    fn setup(mut _commands: Commands, _asset_server: Res<AssetServer>) {
+        let _id = gen_random_id();
     }
 }
 
+//~ #[cfg(not(target_family = "wasm"))]
 fn gen_random_id() -> u64 {
     let uuid = Uuid::new_v4();
 

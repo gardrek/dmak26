@@ -28,7 +28,11 @@ pub struct PlayerName(String);
 
 /// A component that will store the color of the player's avatar
 #[derive(Component, Deserialize, Serialize, Clone, Debug, PartialEq)]
-pub enum PlayerColor {
+pub struct PlayerColor(pub PresetColor);
+
+/// A component that will store the color of the player's avatar
+#[derive(Component, Deserialize, Serialize, Clone, Debug, PartialEq, Copy)]
+pub enum PresetColor {
     Red = 1,
     Green,
     Yellow,
@@ -51,12 +55,12 @@ pub enum PlayerColor {
     Grey,
 }
 
-impl PlayerColor {
-    #[cfg(feature = "client")]
-    fn to_srgba(&self) -> Srgba {
-        use PlayerColor::*;
+#[cfg(feature = "client")]
+impl From<PresetColor> for Srgba {
+    fn from(other: PresetColor) -> Srgba {
+        use PresetColor::*;
 
-        match self {
+        match other {
             Red => Srgba::hex("e6194B"),
             Green => Srgba::hex("3cb44b"),
             Yellow => Srgba::hex("ffe119"),
@@ -82,10 +86,10 @@ impl PlayerColor {
     }
 }
 
-impl TryFrom<u64> for PlayerColor {
+impl TryFrom<u64> for PresetColor {
     type Error = ();
-    fn try_from(other: u64) -> Result<PlayerColor, ()> {
-        use PlayerColor::*;
+    fn try_from(other: u64) -> Result<PresetColor, ()> {
+        use PresetColor::*;
         Ok(match other {
             1 => Red,
             2 => Green,
@@ -124,6 +128,7 @@ impl Ease for PlayerPosition {
 }
 
 // Player
+#[cfg(feature = "server")]
 #[derive(Bundle)]
 pub(crate) struct PlayerBundle {
     id: PlayerId,
@@ -131,6 +136,7 @@ pub(crate) struct PlayerBundle {
     color: PlayerColor,
 }
 
+#[cfg(feature = "server")]
 impl PlayerBundle {
     pub(crate) fn new(id: PeerId, position: Vec2) -> Self {
         // Generate pseudo random color from client id.
@@ -140,7 +146,7 @@ impl PlayerBundle {
         Self {
             id: PlayerId(id),
             position: PlayerPosition(position),
-            color,
+            color: PlayerColor(color),
         }
     }
 }
@@ -153,7 +159,7 @@ impl Plugin for ProtocolPlugin {
 
         app.register_component::<Dreams>();
 
-        app.register_component::<PlayerColor>();
+        app.register_component::<PresetColor>();
 
         app.add_plugins(InputPlugin::<Inputs>::default());
 
@@ -165,18 +171,16 @@ impl Plugin for ProtocolPlugin {
 
 // Inputs - the user actions sent to the server
 
-/// The different directions that the player can move the box
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone, Reflect, Default)]
-pub struct Direction {
-    pub(crate) up: bool,
-    pub(crate) down: bool,
-    pub(crate) left: bool,
-    pub(crate) right: bool,
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, Reflect, Default)]
+pub struct Controls {
+    pub joy_x: f32,
+    pub joy_y: f32,
+    pub fire: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Reflect, Eq, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Reflect, Clone)]
 pub enum Inputs {
-    Direction(Direction),
+    Controls(Controls),
     Spawn,
     Delete,
     ClickerPressed,

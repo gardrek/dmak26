@@ -29,6 +29,7 @@ fn main() {
     });
     app.add_plugins(StatesPlugin);
     app.add_plugins(DiagnosticsPlugin);
+    //app.add_plugins(shared::AutosavePlugin);
 
     let tick_duration = Duration::from_secs_f64(1.0 / shared::FIXED_TIMESTEP_HZ);
 
@@ -36,9 +37,13 @@ fn main() {
 
     app.add_plugins(msg::ProtocolPlugin);
 
+    app.add_plugins(srv::ExampleServerPlugin);
+
     let _server = app
         .world_mut()
-        .spawn(srv::ExampleServer) // {
+        .spawn(srv::ExampleServer)
+        /*
+        // {
         //conditioner: None,
         // transport: ServerTransports::Udp {
         //     local_port: SERVER_PORT,
@@ -61,11 +66,12 @@ fn main() {
         // },
         //shared: SHARED_SETTINGS,
         //})
+        */
         .id();
 
     app.add_systems(Startup, start);
 
-    app.add_plugins(shared::HelloPlugin).run();
+    app.run();
 }
 
 fn start(mut commands: Commands, server: Single<Entity, With<Server>>) {

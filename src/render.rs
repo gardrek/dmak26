@@ -104,9 +104,11 @@ impl CounterRenderPlugin {
         coin_sound: Res<CoinSound>,
         //~ asset_server: Res<AssetServer>,
     ) {
-        number.update(|counter| {
-            counter.inc();
-        }).unwrap();
+        number
+            .update(|counter| {
+                counter.inc();
+            })
+            .unwrap();
 
         commands.spawn((
             AudioPlayer::new(coin_sound.0.clone()),
@@ -114,7 +116,10 @@ impl CounterRenderPlugin {
         ));
     }
 
-    fn update_counter_text(counter: Res<Persistent<Counter>>, mut text: Single<&mut Text, With<CounterText>>) {
+    fn update_counter_text(
+        counter: Res<Persistent<Counter>>,
+        mut text: Single<&mut Text, With<CounterText>>,
+    ) {
         text.0 = format!("{}", counter.get_count());
     }
 }

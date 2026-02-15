@@ -128,7 +128,6 @@ impl Ease for PlayerPosition {
 }
 
 // Player
-#[cfg(feature = "server")]
 #[derive(Bundle)]
 pub(crate) struct PlayerBundle {
     id: PlayerId,
@@ -136,7 +135,6 @@ pub(crate) struct PlayerBundle {
     color: PlayerColor,
 }
 
-#[cfg(feature = "server")]
 impl PlayerBundle {
     pub(crate) fn new(id: PeerId, position: Vec2) -> Self {
         // Generate pseudo random color from client id.

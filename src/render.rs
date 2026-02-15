@@ -1,3 +1,5 @@
+// this module should handle video and audio for the client
+
 use bevy::prelude::*;
 
 use bevy::input::common_conditions::input_just_pressed;

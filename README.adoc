@@ -10,4 +10,10 @@ to build client native:
 to build server native:
 `cargo build --release --bin server --features server`
 
+to run native, replace `build` with `run`. if not built yet, it will build first so it could take a while
+
+to test the web client, i just test directly on `itch.io`. if you run `package_web.sh`, it will create a zip file in the _parent_ of the crate directory. this file can be uploaded directly to `itch.io` or another similar site. if you don't want this behavior, edit the script.
+
+alternatively to test the web client, if you have `wasm-server-runner` installed, you might be able to do `cargo run --bin client --target wasm32-unknown-unknown` and that should open it in your browser.
+
 remove the `--release` option to build dev builds, which should be faster to compile

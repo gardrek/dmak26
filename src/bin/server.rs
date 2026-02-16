@@ -37,8 +37,6 @@ fn main() {
 
     app.add_plugins(msg::ProtocolPlugin);
 
-    app.add_plugins(srv::ExampleServerPlugin);
-
     let _server = app
         .world_mut()
         .spawn(srv::ExampleServer)
@@ -68,6 +66,8 @@ fn main() {
         //})
         */
         .id();
+
+    app.add_plugins(srv::ExampleServerPlugin);
 
     app.add_systems(Startup, start);
 

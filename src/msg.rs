@@ -186,7 +186,7 @@ pub enum Inputs {
 
 impl Default for Inputs {
     fn default() -> Self {
-        Self::ClickerPressed
+        Self::Controls(Controls::default())
     }
 }
 

@@ -121,7 +121,15 @@ impl ExampleServer {
             let local_port = shared::SERVER_PORT;
             add_netcode(&mut entity_mut);
             let server_addr = SocketAddr::new(Ipv4Addr::UNSPECIFIED.into(), local_port);
-            entity_mut.insert((LocalAddr(server_addr), ServerUdpIo::default()));
+            entity_mut.insert((
+                LocalAddr(server_addr),
+                ServerUdpIo::default(),
+                /*
+                WebTransportServerIo {
+                    certificate: (&certificate).into(),
+                },
+                // */
+            ));
             /*
             ServerTransports::WebTransport {
                 local_port,

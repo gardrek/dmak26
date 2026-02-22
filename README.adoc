@@ -24,4 +24,4 @@ Alternatively, to test the web client, if you have `wasm-server-runner` installe
 cargo run --release --bin client --target wasm32-unknown-unknown
 ----
 
-To build dev builds, remove the `--release` option, which should be faster to compile.
+To build dev builds, which should be faster to compile, run the same command without the `--release` flag.
